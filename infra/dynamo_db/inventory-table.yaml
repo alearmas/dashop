@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  InventoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: inventory_table
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: inventoryID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: inventoryID
+          KeyType: HASH

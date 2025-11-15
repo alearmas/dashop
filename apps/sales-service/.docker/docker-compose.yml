@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  dynamodb:
+    image: amazon/dynamodb-local:2.5.2
+    container_name: dynamodb-local
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:8000 || exit 1"]
+      interval: 3s
+      timeout: 1s
+      retries: 10

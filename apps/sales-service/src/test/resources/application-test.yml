@@ -1,0 +1,6 @@
+aws:
+  region: us-east-1
+dynamodb:
+  endpoint: http://localhost:8000
+tables:
+  sales: SalesTable_test

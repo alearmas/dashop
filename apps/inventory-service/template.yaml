@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024
+    Runtime: java21
+    Architectures: [ x86_64 ]
+
+Resources:
+
+  InventoryApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: InventoryApi
+      StageName: Prod
+      Cors:
+        AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE,PATCH'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+        AllowOrigin: "'*'"
+
+  InventoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.aarmas.inventory_service.handler.InventoryHandler
+      Environment:
+        Variables:
+          # Usa las tablas EXISTENTES. NO crear nuevas.
+          PRODUCTS_TABLE: products_table
+          INVENTORY_TABLE: inventory_table
+          LOW_STOCK_GSI: GSI_LowStock
+          # NO pongas AWS_REGION: es variable reservada en Lambda.
+      Events:
+        ProxyAll:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref InventoryApi
+      Policies:
+        # Los nombres son literales; la policy funciona aunque las tablas no sean parte del stack.
+        - DynamoDBCrudPolicy: { TableName: products_table }
+        - DynamoDBCrudPolicy: { TableName: inventory_table }
+
+# ⚠️ Importante: NO definimos Resources para DynamoDB Tables aquí.
+# Ya existen en tu cuenta con esos nombres, por eso fallaba el CREATE.
+
+Outputs:
+  ApiUrl:
+    Description: "Endpoint público del API Gateway"
+    Value: !Sub "https://${InventoryApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  ProductsTableName:
+    Description: "Nombre de la tabla de productos (existente)"
+    Value: products_table
+  InventoryTableName:
+    Description: "Nombre de la tabla de inventario (existente)"
+    Value: inventory_table

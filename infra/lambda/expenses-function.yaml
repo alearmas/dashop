@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  DaShopApi:
+    Type: String
+
+Resources:
+  ExpensesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ExpensesFunction
+      CodeUri: ../../expenses-service/build/libs/
+      Handler: com.aarmas.expenses_service.handler.ExpenseHandler::handleRequest
+      Runtime: java17
+      MemorySize: 1024
+      Timeout: 20
+      Events:
+        ExpensesPOST:
+          Type: Api
+          Properties:
+            RestApiId: !Ref DaShopApi
+            Path: /expenses
+            Method: POST
+        ExpensesGET:
+          Type: Api
+          Properties:
+            RestApiId: !Ref DaShopApi
+            Path: /expenses
+            Method: GET
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: expenses_table

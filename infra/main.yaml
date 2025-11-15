@@ -1,0 +1,110 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless application for managing inventory
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: java21
+    MemorySize: 512
+
+Resources:
+
+  ### API GATEWAY (CENTRALIZADO) ###
+  DaShopApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: DaShopApi
+      StageName: Prod
+      Cors:
+        AllowMethods: "'OPTIONS,POST,GET'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+        AllowOrigin: "'*'"
+
+  ### DYNAMODB TABLES ###
+  ExpensesTable:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: dynamo_db/expenses-table.yaml
+
+  SalesTable:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: dynamo_db/sales-table.yaml
+
+  InventoryTable:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: dynamo_db/inventory-table.yaml
+
+  ### LAMBDAS UNIFICADAS (SIN SUBTEMPLATES) ###
+
+  ExpensesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ExpensesFunction
+      CodeUri: ../expenses-service/
+      Handler: com.aarmas.expenses_service.handler.ExpenseHandler::handleRequest
+      Events:
+        ExpensesPOST:
+          Type: Api
+          Properties:
+            RestApiId: !Ref DaShopApi
+            Path: /expenses
+            Method: POST
+        ExpensesGET:
+          Type: Api
+          Properties:
+            RestApiId: !Ref DaShopApi
+            Path: /expenses
+            Method: GET
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: expenses_table
+
+  SalesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SalesFunction
+      CodeUri: ../sales-service/
+      Handler: com.aarmas.sales_service.handler.SalesHandler::handleRequest
+      Events:
+        SalesPOST:
+          Type: Api
+          Properties:
+            RestApiId: !Ref DaShopApi
+            Path: /sales
+            Method: POST
+        SalesGET:
+          Type: Api
+          Properties:
+            RestApiId: !Ref DaShopApi
+            Path: /sales
+            Method: GET
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: sales_table
+
+  InventoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: InventoryFunction
+      CodeUri: ../inventory-service/
+      Handler: com.aarmas.inventory_service.handler.InventoryHandler::handleRequest
+      Events:
+        InventoryGET:
+          Type: Api
+          Properties:
+            RestApiId: !Ref DaShopApi
+            Path: /inventory
+            Method: GET
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: inventory_table
+
+Outputs:
+  DaShopApiId:
+    Description: API Gateway ID
+    Value: !Ref DaShopApi
+    Export:
+      Name: DaShopApiId

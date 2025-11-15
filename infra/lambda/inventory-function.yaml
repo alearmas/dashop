@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  InventoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.aarmas.inventory_service.handler.InventoryHandler::handleRequest
+      Events:
+        InventoryPOST:
+          Type: Api
+          Properties:
+            Path: /inventory
+            Method: POST
+            RestApiId: !ImportValue InventoryApiId
+        InventoryGET:
+          Type: Api
+          Properties:
+            Path: /inventory
+            Method: GET
+            RestApiId: !ImportValue InventoryApiId
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: inventory_table

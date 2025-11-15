@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: sales-service
+
+aws:
+  dynamodb:
+    region: us-east-1
+    table:
+      sales: sales_table
+
+app:
+  sales:
+    table-name: SalesTable

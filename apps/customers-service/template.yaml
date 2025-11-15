@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024
+    Runtime: java21
+    Architectures:
+      - x86_64
+
+Resources:
+
+  CustomersApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: CustomersApi
+      StageName: Prod
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+
+  CustomersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: customers_table
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: customersID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: customersID
+          KeyType: HASH
+    DeletionPolicy: Retain
+
+  CustomersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.aarmas.customers_service.handler.CustomersHandler
+      Runtime: java21
+      MemorySize: 1024
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CustomersTable
+
+      Events:
+        GetCustomers:
+          Type: Api
+          Properties:
+            Path: /customers
+            Method: GET
+            RestApiId: !Ref CustomersApi
+        CreateCustomers:
+          Type: Api
+          Properties:
+            Path: /customers
+            Method: POST
+            RestApiId: !Ref CustomersApi
+
+  GatewayResponseDefault4XX:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseType: DEFAULT_4XX
+      RestApiId: !Ref CustomersApi
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+
+  GatewayResponseDefault5XX:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseType: DEFAULT_5XX
+      RestApiId: !Ref CustomersApi
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"

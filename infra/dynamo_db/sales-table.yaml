@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  SalesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: sales_table
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: saleID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: saleID
+          KeyType: HASH

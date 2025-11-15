@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: expense-service
+
+expenses:
+  table: expenses_table
+
+logging:
+  level:
+    com.aarmas.expenses_service: DEBUG
+    software.amazon.awssdk.enhanced.dynamodb: INFO

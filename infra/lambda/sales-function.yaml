@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  DaShopApi:
+    Type: AWS::Serverless::Api
+
+Resources:
+  SalesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SalesFunction
+      CodeUri: ../../sales-service/build/libs/
+      Handler: com.aarmas.sales_service.handler.SalesHandler::handleRequest
+      Runtime: java17
+      MemorySize: 1024
+      Timeout: 20
+      Events:
+        SalesPOST:
+          Type: Api
+          Properties:
+            RestApiId: !Ref DaShopApi
+            Path: /sales
+            Method: POST
+        SalesGET:
+          Type: Api
+          Properties:
+            RestApiId: !Ref DaShopApi
+            Path: /sales
+            Method: GET
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: sales_table

@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: inventory-service
+
+aws:
+  region: us-east-1
+  dynamodb:
+    tables:
+      products: products_table
+      inventory: inventory_table
+    gsi:
+      low-stock: GSI_LowStock
+
+app:
+  warehouse:
+    default-id: default
+  pagination:
+    page-size: 50

@@ -1,0 +1,64 @@
+name: Integration Tests
+on:
+  pull_request:
+    paths:
+      - ".docker/**"
+      - "**/*.java"
+      - "src/**"
+      - "build.gradle.kts"
+  push:
+    branches: [ main ]
+    paths:
+      - ".docker/**"
+      - "**/*.java"
+      - "src/**"
+      - "build.gradle.kts"
+permissions:
+  contents: read
+concurrency:
+  group: it-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  it:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      dynamodb:
+        image: amazon/dynamodb-local:2.5.2
+        ports: [ "8000:8000" ]
+        options: >-
+          --health-cmd "curl -sf http://localhost:8000 || exit 1"
+          --health-interval 2s --health-retries 30 --health-timeout 2s
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/wrapper-validation-action@v2
+      - uses: gradle/actions/setup-gradle@v3
+
+      - name: Wait for Dynamo (nc)
+        run: |
+          for i in {1..60}; do nc -z 127.0.0.1 8000 && exit 0; echo "esperando dynamo..."; sleep 1; done
+          echo "Dynamo no levantó"; exit 1
+
+      - name: Run integration tests
+        env:
+          SPRING_PROFILES_ACTIVE: it
+          AWS_ACCESS_KEY_ID: dummy
+          AWS_SECRET_ACCESS_KEY: dummy
+          AWS_REGION: us-east-1
+          DYNAMO_ENDPOINT: http://localhost:8000
+        run: ./gradlew --no-daemon integrationTest
+
+      - name: Upload IT reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-reports
+          retention-days: 7
+          path: |
+            **/build/test-results/**
+            **/build/reports/tests/**

@@ -1,0 +1,41 @@
+name: Lint
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "**/*.java"
+      - "build.gradle.kts"
+      - "gradle/**"
+      - ".editorconfig"
+      - ".gitignore"
+  push:
+    branches: [ main ]
+    paths:
+      - "**/*.java"
+      - "build.gradle.kts"
+      - "gradle/**"
+permissions:
+  contents: read
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      # Evita la cache doble: la pasa a manejar el action de Gradle
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      # Valida wrapper (seguridad)
+      - uses: gradle/wrapper-validation-action@v2
+
+      - uses: gradle/actions/setup-gradle@v3
+
+      - name: Check style (Spotless + Checkstyle)
+        run: ./gradlew --no-daemon spotlessCheck checkstyleMain checkstyleTest
