@@ -1,6 +1,6 @@
 package com.aarmas.expenses_service.services;
 
-import com.aarmas.dashop.shared.PaymentMethod;
+import com.aarmas.shared.PaymentMethod;
 import com.aarmas.expenses_service.dtos.ExpenseRequest;
 import com.aarmas.expenses_service.dtos.ExpenseResponse;
 import com.aarmas.expenses_service.exceptions.InvalidExpenseException;

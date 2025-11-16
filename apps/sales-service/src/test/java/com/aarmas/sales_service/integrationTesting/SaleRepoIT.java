@@ -1,6 +1,6 @@
 package com.aarmas.sales_service.integrationTesting;
 
-import com.aarmas.dashop.shared.PaymentMethod;
+import com.aarmas.shared.PaymentMethod;
 import com.aarmas.sales_service.models.Sale;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Tag;

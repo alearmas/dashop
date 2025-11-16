@@ -1,4 +1,4 @@
-package com.aarmas.dashop.shared;
+package com.aarmas.shared;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

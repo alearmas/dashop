@@ -1,6 +1,6 @@
 package com.aarmas.expenses_service.dtos;
 
-import com.aarmas.dashop.shared.PaymentMethod;
+import com.aarmas.shared.PaymentMethod;
 import com.aarmas.expenses_service.models.ExpenseCategory;
 import com.aarmas.expenses_service.models.RecurrenceDetails;
 
