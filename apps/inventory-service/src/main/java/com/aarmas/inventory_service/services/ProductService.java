@@ -69,9 +69,10 @@ public class ProductService {
     public Product patch(String id, ProductPatchRequest req) {
         var partial = new Product();
         partial.setProductID(id);
-        if (req.brand() != null)         partial.setBrand(req.brand());
+
+        if (hasText(req.brand()))        partial.setBrand(req.brand());
         if (req.type() != null)          partial.setType(req.type());
-        if (req.presentation() != null)  partial.setPresentation(req.presentation());
+        if (hasText(req.presentation())) partial.setPresentation(req.presentation());
         if (req.size() != null)          partial.setSize(req.size());
         if (req.contentUnit() != null)   partial.setContentUnit(req.contentUnit());
         if (req.contentQty() != null)    partial.setContentQty(req.contentQty());
@@ -82,6 +83,10 @@ public class ProductService {
         } catch (ConditionalCheckFailedException e) {
             throw new ProductNotFoundException(id);
         }
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 
 }

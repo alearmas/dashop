@@ -1,26 +1,14 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
-	java
-	id("org.springframework.boot") version "3.5.3"
-	id("io.spring.dependency-management") version "1.1.7"
-}
-
-group = "com.aarmas"
-version = "0.0.1-SNAPSHOT"
-
-java {
-	toolchain {
-		languageVersion.set(JavaLanguageVersion.of(21))
-	}
+	id("org.springframework.boot")
+	id("io.spring.dependency-management")
 }
 
 configurations {
 	compileOnly {
 		extendsFrom(configurations.annotationProcessor.get())
 	}
-}
-
-repositories {
-	mavenCentral()
 }
 
 dependencies {
@@ -49,10 +37,6 @@ dependencies {
 	testImplementation("org.assertj:assertj-core:3.25.3")
 }
 
-tasks.test {
-	useJUnitPlatform()
-}
-
 tasks.register<Jar>("awsJar") {
 	archiveBaseName.set("inventory-service")
 	archiveClassifier.set("aws")
@@ -63,7 +47,9 @@ tasks.register<Jar>("awsJar") {
 
 	dependsOn(configurations.runtimeClasspath)
 	from({
-		configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+		configurations.runtimeClasspath.get()
+			.filter { it.name.endsWith("jar") }
+			.map { zipTree(it) }
 	})
 
 	manifest {
@@ -71,7 +57,7 @@ tasks.register<Jar>("awsJar") {
 	}
 }
 
-tasks.bootJar {
+tasks.withType<BootJar> {
 	archiveClassifier.set("aws")
 	mainClass.set("org.springframework.boot.loader.JarLauncher")
 }
