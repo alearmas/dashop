@@ -1,11 +1,11 @@
 package com.aarmas.expenses_service.services;
 
+import com.aarmas.dashop.shared.PaymentMethod;
 import com.aarmas.expenses_service.dtos.ExpenseRequest;
 import com.aarmas.expenses_service.dtos.ExpenseResponse;
 import com.aarmas.expenses_service.exceptions.InvalidExpenseException;
 import com.aarmas.expenses_service.models.Expense;
 import com.aarmas.expenses_service.models.ExpenseCategory;
-import com.aarmas.expenses_service.models.PaymentMethod;
 import com.aarmas.expenses_service.repositories.ExpenseRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

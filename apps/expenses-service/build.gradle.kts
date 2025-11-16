@@ -25,6 +25,8 @@ repositories {
 }
 
 dependencies {
+	implementation(project(":libs:shared"))
+
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 

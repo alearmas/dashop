@@ -1,5 +1,6 @@
 package com.aarmas.sales_service.models;
 
+import com.aarmas.dashop.shared.PaymentMethod;
 import com.aarmas.sales_service.dto.responses.ItemResponse;
 import com.aarmas.sales_service.dto.responses.SaleResponse;
 import lombok.AllArgsConstructor;

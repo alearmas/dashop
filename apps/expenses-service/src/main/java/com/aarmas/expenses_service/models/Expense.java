@@ -1,5 +1,6 @@
 package com.aarmas.expenses_service.models;
 
+import com.aarmas.dashop.shared.PaymentMethod;
 import lombok.*;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
 

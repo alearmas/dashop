@@ -1,5 +1,6 @@
 package com.aarmas.sales_service.integrationTesting;
 
+import com.aarmas.dashop.shared.PaymentMethod;
 import com.aarmas.sales_service.models.Sale;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Tag;
@@ -69,7 +70,7 @@ class SaleRepoIT {
         sale.setSk("META");
         sale.setSeller("María González");
         sale.setCustomer("Pedro Perez");
-        sale.setPaymentMethod(com.aarmas.sales_service.models.PaymentMethod.CASH);
+        sale.setPaymentMethod(PaymentMethod.CASH);
         sale.setChannel(com.aarmas.sales_service.models.SaleChannel.IN_PERSON);
         sale.setSaleDate(saleDate);
         sale.setTotal(new BigDecimal("40000"));
@@ -101,7 +102,7 @@ class SaleRepoIT {
     private void ensureTableWithGsi() {
         try {
             client.describeTable(b -> b.tableName(tableName));
-            return; // ya existe
+            return;
         } catch (ResourceNotFoundException ignored) { }
 
         client.createTable(CreateTableRequest.builder()
