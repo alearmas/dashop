@@ -1,7 +1,7 @@
 package com.aarmas.sales_service.dto.requests;
 
+import com.aarmas.dashop.shared.PaymentMethod;
 import com.aarmas.sales_service.models.Item;
-import com.aarmas.sales_service.models.PaymentMethod;
 import com.aarmas.sales_service.models.SaleChannel;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;

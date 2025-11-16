@@ -1,10 +1,14 @@
-package com.aarmas.sales_service.models;
+package com.aarmas.dashop.shared;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum PaymentMethod {
     CASH ("efectivo"),
+    CREDIT_CARD ("tarjeta de crédito"),
+    DEBIT_CARD("tarjeta de débito"),
+    MERCADO_PAGO ("mercado pago"),
+    QR("QR"),
     TRANSFER ("transferencia");
 
     private final String label;

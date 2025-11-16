@@ -1,6 +1,6 @@
 package com.aarmas.sales_service.dto.responses;
 
-import com.aarmas.sales_service.models.PaymentMethod;
+import com.aarmas.dashop.shared.PaymentMethod;
 import com.aarmas.sales_service.models.SaleChannel;
 
 import java.math.BigDecimal;
